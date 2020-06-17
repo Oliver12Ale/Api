@@ -1,0 +1,1 @@
+﻿scaffold-DbContext "Server=DOTNET06;Database=Evaluacion;User Id=sa;Password=Pass2017;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models/Models -ContextDir Models/Context -Context SecContext -Force
