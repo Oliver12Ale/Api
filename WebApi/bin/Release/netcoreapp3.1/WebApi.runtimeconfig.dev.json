@@ -1,8 +1,8 @@
 {
   "runtimeOptions": {
     "additionalProbingPaths": [
-      "C:\\Users\\NextClick\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\NextClick\\.nuget\\packages",
+      "C:\\Users\\Inets Test\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Inets Test\\.nuget\\packages",
       "C:\\Microsoft\\Xamarin\\NuGet"
     ]
   }

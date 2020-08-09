@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using WebApi.Models.Context;
 using WebApi.Models.Models;
 
@@ -15,11 +20,13 @@ namespace WebApi.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly SecContext _context;
-
-        public UsuariosController(SecContext context)
+        private IConfiguration _config;
+        public UsuariosController(SecContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
+       
 
         // GET: api/Usuarios
         [HttpGet]
@@ -105,6 +112,61 @@ namespace WebApi.Controllers
         private bool UsuariosExists(int id)
         {
             return _context.Usuarios.Any(e => e.IdUsuario == id);
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IActionResult> Login(Usuarios usuario)
+        {
+
+           
+
+            if (ModelState.IsValid)
+            {
+                var result = await _context.Usuarios.FirstOrDefaultAsync(user => user.Email == usuario.Email && user.Password == usuario.Password);
+                if (result != null)
+                {
+                    return BuildToken(result);
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return BadRequest(ModelState);
+                }
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
+        private IActionResult BuildToken(Usuarios userInfo)
+        {
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
+                new Claim("miValor", "Lo que yo quiera"),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var expiration = DateTime.UtcNow.AddHours(1);
+
+            JwtSecurityToken token = new JwtSecurityToken(
+               issuer: "http://localhost:49986/",
+               audience: "http://localhost:49986/",
+               claims: claims,
+               expires: expiration,
+               signingCredentials: creds);
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = expiration
+            });
+
         }
     }
 }

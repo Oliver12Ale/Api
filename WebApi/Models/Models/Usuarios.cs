@@ -19,7 +19,7 @@ namespace WebApi.Models.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public DateTime FechaCreacion { get; set; }
-        public DateTime FechaModificacion { get; set; }
+        public DateTime? FechaModificacion { get; set; }
 
         public virtual ICollection<NivelesUsuarios> NivelesUsuarios { get; set; }
         public virtual ICollection<Pruebas> Pruebas { get; set; }

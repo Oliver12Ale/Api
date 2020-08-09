@@ -30,6 +30,7 @@ namespace WebApi.Models.Context
             if (!optionsBuilder.IsConfigured)
             {
 
+                optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=Evaluacion;Trusted_Connection=True;");
             }
         }
 

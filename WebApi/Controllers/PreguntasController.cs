@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,7 @@ namespace WebApi.Controllers
 
         // GET: api/Preguntas
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Preguntas>>> GetPreguntas()
         {
             return await _context.Preguntas.Include(ops =>ops.Opciones).ToListAsync();
